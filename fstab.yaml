@@ -1,0 +1,7 @@
+mountpoints:
+  /:
+    url: https://content.da.live/yennd10/aem-boilerplate-commerce/
+    type: markup
+
+folders:
+  /products/: /products/default
