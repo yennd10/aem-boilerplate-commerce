@@ -419,9 +419,85 @@ export default async function decorate(block) {
       toggleSearch(false);
     }
   });
+  
+  const mesWrapper = document.createElement("div");
+  mesWrapper.classList.add("wrapper-top-message");
+  const mesHeader = document.createElement("div");
+  mesHeader.classList.add("message-container");
+  mesWrapper.appendChild(mesHeader);
 
-  const navWrapper = document.createElement('div');
-  navWrapper.className = 'nav-wrapper';
+  // Tải nội dung từ Google Doc cho header
+  const topMessageMeta = getMetadata("top-message");
+
+  if (!topMessageMeta) {
+    mesHeader.innerHTML = "";
+    return;
+  }
+
+  try {
+    // Tải fragment từ Google Doc
+    const topMessagePath = new URL(topMessageMeta, window.location).pathname;
+    console.log("Đang tải top message cho header từ:", topMessagePath);
+
+    const fragment = await loadFragment(topMessagePath);
+    if (!fragment) {
+      mesHeader.innerHTML = "";
+      return;
+    }
+
+    // Tìm nội dung trong fragment (với fallback)
+    const content =
+      fragment.querySelector(".default-content-wrapper") ||
+      fragment.querySelector(".content") ||
+      fragment;
+
+    if (!content) {
+      mesHeader.innerHTML = "";
+      return;
+    }
+
+    // Lấy HTML content từ Google Doc
+    const htmlContent = content.innerHTML || content.outerHTML || "";
+
+    // Xử lý và làm sạch HTML content
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = htmlContent;
+
+    // Loại bỏ wrapper .button-container nhưng giữ nội dung bên trong
+    tempDiv.querySelectorAll(".button-container").forEach((container) => {
+      const innerContent = container.innerHTML;
+      if (innerContent) {
+        container.replaceWith(
+          document.createRange().createContextualFragment(innerContent)
+        );
+      }
+    });
+
+    // Loại bỏ class 'button' khỏi các thẻ <a>
+    tempDiv.querySelectorAll("a.button").forEach((link) => {
+      link.classList.remove("button");
+    });
+
+    // Lấy HTML content đã được làm sạch
+    const finalHtmlContent = tempDiv.innerHTML;
+
+    if (finalHtmlContent.trim()) {
+      mesHeader.innerHTML = finalHtmlContent;
+      console.log(
+        "✅ Đã tải thành công nội dung HTML cho header từ Google Doc"
+      );
+    } else {
+      mesHeader.innerHTML = "";
+      console.log("⚠️ Không tìm thấy nội dung trong Google Doc cho header");
+    }
+  } catch (error) {
+    console.error("❌ Lỗi khi tải nội dung cho header:", error);
+    mesHeader.innerHTML = "";
+  }
+
+  const navWrapper = document.createElement("div");
+  navWrapper.className = "nav-wrapper";
+  navWrapper.prepend(mesWrapper);
   navWrapper.append(nav);
   block.append(navWrapper);
 

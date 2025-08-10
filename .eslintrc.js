@@ -26,6 +26,7 @@ module.exports = {
     ],
     'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     'no-underscore-dangle': 'off', // allow all underscore properties
+    quotes: 'off', // Tắt hoàn toàn quy tắc quotes
   },
   overrides: [
     {
