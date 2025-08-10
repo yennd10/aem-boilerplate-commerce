@@ -1,5 +1,8 @@
 # Edge Delivery Services + Adobe Commerce Boilerplate
+
 This project boilerplate is for Edge Delivery Services projects that integrate with Adobe Commerce.
+https://content.da.live/yennd10/aem-boilerplate-commerce/
+url: https://drive.google.com/drive/u/0/folders/1bLoadkdj-dfg3Y_hh_TkOm2PA6b6nWnk
 
 ## Documentation
 
@@ -12,8 +15,8 @@ Before using the boilerplate, we recommend you to go through the documentation o
 1. [Web Performance](https://www.aem.live/developer/keeping-it-100)
 1. [Markup, Sections, Blocks, and Auto Blocking](https://www.aem.live/developer/markup-sections-blocks)
 
-
 ## Environments
+
 - Preview: https://main--{repo}--{owner}.aem.page/
 - Live: https://main--{repo}--{owner}.aem.live/
 
@@ -30,7 +33,6 @@ Additionally, you need to have the following modules and customizations installe
 <!-- 1. TODO: Add further prereqs.  -->
 
 ## Documentation
-
 
 ## Initial Setup
 
@@ -54,15 +56,15 @@ The boilerplate assumes you already have an `aem.live` org and will onboard a ne
 
 Before running the command, replace all variables to match your project values:
 
-* `{ORG}` - Name of your organistation in GitHub.
-* `{SITE}` - Name of your site in the org. For the first site in your org, it must be equal to the GitHub repository name.
-* `{REPO}` - Name of your GitHub repository.
-* `{ADMIN_USER_EMAIL}` - Email address of your config admin user.
-* `{ADMIN_USER_ID}` - User ID of your authoring admin (click user icon in top right, then click "share" icon in da.live to copy).
-* `{DOMAIN}` - Public facing domain of your site (e.g. `www.your-shop.com`).
-* `{ENDPOINT}` - Your Commerce graphql endpoint.
-* `{CS_ENDPOINT}` - Your Catalog Services endpoint.
-* `{YOUR_TOKEN}` - Your personal access token. You can retrieve one from login via one of the methods from https://admin.hlx.page/login and copy the token from the `auth_token` cookie in the response.
+- `{ORG}` - Name of your organistation in GitHub.
+- `{SITE}` - Name of your site in the org. For the first site in your org, it must be equal to the GitHub repository name.
+- `{REPO}` - Name of your GitHub repository.
+- `{ADMIN_USER_EMAIL}` - Email address of your config admin user.
+- `{ADMIN_USER_ID}` - User ID of your authoring admin (click user icon in top right, then click "share" icon in da.live to copy).
+- `{DOMAIN}` - Public facing domain of your site (e.g. `www.your-shop.com`).
+- `{ENDPOINT}` - Your Commerce graphql endpoint.
+- `{CS_ENDPOINT}` - Your Catalog Services endpoint.
+- `{YOUR_TOKEN}` - Your personal access token. You can retrieve one from login via one of the methods from https://admin.hlx.page/login and copy the token from the `auth_token` cookie in the response.
 
 ! Double check that there are no remaining template variables in the default files before you push !
 
@@ -76,6 +78,7 @@ curl -X PUT 'https://admin.hlx.page/config/{org}/sites/{site}.json' \
 ```
 
 ### Apply Index Configuration
+
 ```bash
 curl -X POST 'https://admin.hlx.page/config/{org}/sites/{site}/content/query.yaml' \
   -H 'content-type: text/yaml' \
@@ -84,6 +87,7 @@ curl -X POST 'https://admin.hlx.page/config/{org}/sites/{site}/content/query.yam
 ```
 
 ### Apply Sitemap Configuration
+
 ```bash
 curl -X POST 'https://admin.hlx.page/config/{org}/sites/{site}/content/sitemap.yaml' \
   -H 'content-type: text/yaml' \
@@ -133,7 +137,6 @@ The [Site Creator Tool](https://da.live/app/hlxsites/aem-boilerplate-commerce/to
 The tool source is found in `tools/site-creator` in this repository.
 
 If you want to develop on the tool, you can use DA's `ref` capability in conjunction with your org and site name: `https://da.live/app/${ORG}$/${SITE}/tools/site-creator/site-creator?ref=${BRANCH_NAME}`
-
 
 ## Changelog
 

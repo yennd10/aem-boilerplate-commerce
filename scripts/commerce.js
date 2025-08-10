@@ -1,32 +1,32 @@
-import { getCookie } from '@dropins/tools/lib.js';
+import { getCookie } from "@dropins/tools/lib.js";
 import {
   getHeaders,
   getConfigValue,
   getRootPath,
   initializeConfig,
   getListOfRootPaths,
-} from '@dropins/tools/lib/aem/configs.js';
-import { events } from '@dropins/tools/event-bus.js';
-import { getMetadata } from './aem.js';
-import initializeDropins from './initializers/index.js';
+} from "@dropins/tools/lib/aem/configs.js";
+import { events } from "@dropins/tools/event-bus.js";
+import { getMetadata } from "./aem.js";
+import initializeDropins from "./initializers/index.js";
 
 /**
  * Constants
  */
 
 // PATHS
-export const SUPPORT_PATH = '/support';
-export const PRIVACY_POLICY_PATH = '/privacy-policy';
+export const SUPPORT_PATH = "/support";
+export const PRIVACY_POLICY_PATH = "/privacy-policy";
 
 // GUEST PATHS
-export const ORDER_STATUS_PATH = '/order-status';
-export const ORDER_DETAILS_PATH = '/order-details';
-export const RETURN_DETAILS_PATH = '/return-details';
-export const CREATE_RETURN_PATH = '/create-return';
-export const SALES_GUEST_VIEW_PATH = '/sales/guest/view/';
+export const ORDER_STATUS_PATH = "/order-status";
+export const ORDER_DETAILS_PATH = "/order-details";
+export const RETURN_DETAILS_PATH = "/return-details";
+export const CREATE_RETURN_PATH = "/create-return";
+export const SALES_GUEST_VIEW_PATH = "/sales/guest/view/";
 
 // CUSTOMER PATHS
-export const CUSTOMER_PATH = '/customer';
+export const CUSTOMER_PATH = "/customer";
 export const CUSTOMER_ORDER_DETAILS_PATH = `${CUSTOMER_PATH}${ORDER_DETAILS_PATH}`;
 export const CUSTOMER_RETURN_DETAILS_PATH = `${CUSTOMER_PATH}${RETURN_DETAILS_PATH}`;
 export const CUSTOMER_CREATE_RETURN_PATH = `${CUSTOMER_PATH}${CREATE_RETURN_PATH}`;
@@ -36,10 +36,10 @@ export const CUSTOMER_ADDRESS_PATH = `${CUSTOMER_PATH}/address`;
 export const CUSTOMER_LOGIN_PATH = `${CUSTOMER_PATH}/login`;
 export const CUSTOMER_ACCOUNT_PATH = `${CUSTOMER_PATH}/account`;
 export const CUSTOMER_FORGOTPASSWORD_PATH = `${CUSTOMER_PATH}/forgotpassword`;
-export const SALES_ORDER_VIEW_PATH = '/sales/order/view/';
+export const SALES_ORDER_VIEW_PATH = "/sales/order/view/";
 
 // TRACKING URL
-export const UPS_TRACKING_URL = 'https://www.ups.com/track';
+export const UPS_TRACKING_URL = "https://www.ups.com/track";
 
 /**
  * Auth Privacy Policy Consent Slot
@@ -49,23 +49,23 @@ export const UPS_TRACKING_URL = 'https://www.ups.com/track';
  */
 export const authPrivacyPolicyConsentSlot = {
   PrivacyPolicyConsent: async (ctx) => {
-    const wrapper = document.createElement('span');
+    const wrapper = document.createElement("span");
     Object.assign(wrapper.style, {
-      color: 'var(--color-neutral-700)',
-      font: 'var(--type-details-caption-2-font)',
-      display: 'block',
-      marginBottom: 'var(--spacing-medium)',
+      color: "var(--color-neutral-700)",
+      font: "var(--type-details-caption-2-font)",
+      display: "block",
+      marginBottom: "var(--spacing-medium)",
     });
 
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = PRIVACY_POLICY_PATH;
-    link.target = '_blank';
-    link.textContent = 'Privacy Policy';
+    link.target = "_blank";
+    link.textContent = "Privacy Policy";
 
     wrapper.append(
-      'By creating an account, you acknowledge that you have read and agree to our ',
+      "By creating an account, you acknowledge that you have read and agree to our ",
       link,
-      ', which outlines how we collect, use, and protect your personal data.',
+      ", which outlines how we collect, use, and protect your personal data."
     );
 
     ctx.appendChild(wrapper);
@@ -78,10 +78,10 @@ export const authPrivacyPolicyConsentSlot = {
  * @param {string} as - The type of resource being preloaded
  */
 export function preloadFile(href, as) {
-  const link = document.createElement('link');
-  link.rel = 'preload';
+  const link = document.createElement("link");
+  link.rel = "preload";
   link.as = as;
-  link.crossOrigin = 'anonymous';
+  link.crossOrigin = "anonymous";
   link.href = href;
   document.head.appendChild(link);
 }
@@ -96,7 +96,7 @@ function notifyUI(event) {
   // notify dropins about the current loading state
   const handleEmit = () => events.emit(`aem/${event}`);
   // listen for prerender event
-  document.addEventListener('prerenderingchange', handleEmit, { once: true });
+  document.addEventListener("prerenderingchange", handleEmit, { once: true });
   // emit the event immediately
   handleEmit();
 }
@@ -106,16 +106,19 @@ function notifyUI(event) {
  * @returns {string} The detected page type
  */
 function detectPageType() {
-  if (document.body.querySelector('main .product-details')) {
-    return 'Product';
-  } if (document.body.querySelector('main .product-list-page')) {
-    return 'Category';
-  } if (document.body.querySelector('main .commerce-cart')) {
-    return 'Cart';
-  } if (document.body.querySelector('main .commerce-checkout')) {
-    return 'Checkout';
+  if (document.body.querySelector("main .product-details")) {
+    return "Product";
   }
-  return 'CMS';
+  if (document.body.querySelector("main .product-list-page")) {
+    return "Category";
+  }
+  if (document.body.querySelector("main .commerce-cart")) {
+    return "Cart";
+  }
+  if (document.body.querySelector("main .commerce-checkout")) {
+    return "Checkout";
+  }
+  return "CMS";
 }
 
 /**
@@ -123,9 +126,9 @@ function detectPageType() {
  * @param {string} pageType - The detected page type
  */
 async function handleCommercePageType(pageType) {
-  if (pageType === 'Product') {
+  if (pageType === "Product") {
     // initialize pdp
-    await import('./initializers/pdp.js');
+    await import("./initializers/pdp.js");
   }
 }
 
@@ -141,7 +144,7 @@ function initializeAdobeDataLayer(pageType) {
       pageContext: {
         pageType,
         pageName: document.title,
-        eventType: 'visibilityHidden',
+        eventType: "visibilityHidden",
         maxXOffset: 0,
         maxYOffset: 0,
         minXOffset: 0,
@@ -152,10 +155,10 @@ function initializeAdobeDataLayer(pageType) {
       shoppingCartContext: {
         totalQuantity: 0,
       },
-    },
+    }
   );
   window.adobeDataLayer.push((dl) => {
-    dl.push({ event: 'page-view', eventInfo: { ...dl.getState() } });
+    dl.push({ event: "page-view", eventInfo: { ...dl.getState() } });
   });
 }
 
@@ -167,17 +170,71 @@ function initializeAdobeDataLayer(pageType) {
  */
 export async function fetchIndex(indexFile, pageSize = 500) {
   const handleIndex = async (offset) => {
-    const resp = await fetch(`/${indexFile}.json?limit=${pageSize}&offset=${offset}`);
-    const json = await resp.json();
+    try {
+      const resp = await fetch(
+        `/${indexFile}.json?limit=${pageSize}&offset=${offset}`
+      );
 
-    const newIndex = {
-      complete: (json.limit + json.offset) === json.total,
-      offset: json.offset + pageSize,
-      promise: null,
-      data: [...window.index[indexFile].data, ...json.data],
-    };
+      // Check if response is ok
+      if (!resp.ok) {
+        if (resp.status === 404) {
+          console.warn(`Index file not found: /${indexFile}.json`);
+          return {
+            complete: true,
+            offset: 0,
+            promise: null,
+            data: [],
+          };
+        }
+        throw new Error(`HTTP error! status: ${resp.status}`);
+      }
 
-    return newIndex;
+      // Check if response has content
+      const text = await resp.text();
+      if (!text || text.trim() === "") {
+        console.warn(`Empty response for index file: /${indexFile}.json`);
+        return {
+          complete: true,
+          offset: 0,
+          promise: null,
+          data: [],
+        };
+      }
+
+      // Parse JSON safely
+      let json;
+      try {
+        json = JSON.parse(text);
+      } catch (parseError) {
+        console.error(
+          `Failed to parse JSON for index file: /${indexFile}.json`,
+          parseError
+        );
+        return {
+          complete: true,
+          offset: 0,
+          promise: null,
+          data: [],
+        };
+      }
+
+      const newIndex = {
+        complete: json.limit + json.offset === json.total,
+        offset: json.offset + pageSize,
+        promise: null,
+        data: [...window.index[indexFile].data, ...json.data],
+      };
+
+      return newIndex;
+    } catch (error) {
+      console.error(`Error fetching index file: /${indexFile}.json`, error);
+      return {
+        complete: true,
+        offset: 0,
+        promise: null,
+        data: [],
+      };
+    }
   };
 
   window.index = window.index || {};
@@ -199,7 +256,7 @@ export async function fetchIndex(indexFile, pageSize = 500) {
   }
 
   window.index[indexFile].promise = handleIndex(window.index[indexFile].offset);
-  const newIndex = await (window.index[indexFile].promise);
+  const newIndex = await window.index[indexFile].promise;
   window.index[indexFile] = newIndex;
 
   return newIndex;
@@ -214,7 +271,7 @@ export async function loadCommerceEager() {
   await handleCommercePageType(pageType);
 
   // notify that the page is ready for eager loading
-  notifyUI('lcp');
+  notifyUI("lcp");
 }
 
 /**
@@ -225,22 +282,17 @@ export function decorateLinks(main) {
   const root = getRootPath();
   const roots = getListOfRootPaths();
 
-  main.querySelectorAll('a').forEach((a) => {
+  main.querySelectorAll("a").forEach((a) => {
     // If we are in the root, do nothing
     if (roots.length === 0) return;
 
     try {
       const url = new URL(a.href);
-      const {
-        origin,
-        pathname,
-        search,
-        hash,
-      } = url;
+      const { origin, pathname, search, hash } = url;
 
       // Skip localization if #nolocal flag is present
-      if (hash === '#nolocal') {
-        url.hash = '';
+      if (hash === "#nolocal") {
+        url.hash = "";
         a.href = url.toString();
         return;
       }
@@ -249,10 +301,13 @@ export function decorateLinks(main) {
       if (roots.some((r) => r !== root && pathname.startsWith(r))) return;
 
       // If the link is already localized, do nothing
-      if (origin !== window.location.origin || pathname.startsWith(root)) return;
-      a.href = new URL(`${origin}${root}${pathname.replace(/^\//, '')}${search}${hash}`);
+      if (origin !== window.location.origin || pathname.startsWith(root))
+        return;
+      a.href = new URL(
+        `${origin}${root}${pathname.replace(/^\//, "")}${search}${hash}`
+      );
     } catch {
-      console.warn('Could not make localized link');
+      console.warn("Could not make localized link");
     }
   });
 }
@@ -265,11 +320,11 @@ export async function loadCommerceLazy() {
   autolinkModals(document);
 
   // Initialize Adobe Client Data Layer
-  await import('./acdl/adobe-client-data-layer.min.js');
+  await import("./acdl/adobe-client-data-layer.min.js");
 
   // Initialize Adobe Client Data Layer validation
-  if (sessionStorage.getItem('acdl:debug')) {
-    import('./acdl/validate.js');
+  if (sessionStorage.getItem("acdl:debug")) {
+    import("./acdl/validate.js");
   }
 
   // Track history
@@ -290,7 +345,7 @@ export async function initializeCommerce() {
  * @returns {string} - The localized link
  */
 export function rootLink(link) {
-  const root = getRootPath().replace(/\/$/, '');
+  const root = getRootPath().replace(/\/$/, "");
 
   // If the link is already localized, do nothing
   if (link.startsWith(root)) return link;
@@ -302,20 +357,23 @@ export function rootLink(link) {
  * @param {Element} doc The document element
  */
 function buildTemplateColumns(doc) {
-  const columns = doc.querySelectorAll('main > div.section[data-column-width]');
+  const columns = doc.querySelectorAll("main > div.section[data-column-width]");
 
   columns.forEach((column) => {
-    const columnWidth = column.getAttribute('data-column-width');
-    const gap = column.getAttribute('data-gap');
+    const columnWidth = column.getAttribute("data-column-width");
+    const gap = column.getAttribute("data-gap");
 
     if (columnWidth) {
-      column.style.setProperty('--column-width', columnWidth);
-      column.removeAttribute('data-column-width');
+      column.style.setProperty("--column-width", columnWidth);
+      column.removeAttribute("data-column-width");
     }
 
     if (gap) {
-      column.style.setProperty('--gap', `var(--spacing-${gap.toLocaleLowerCase()})`);
-      column.removeAttribute('data-gap');
+      column.style.setProperty(
+        "--gap",
+        `var(--spacing-${gap.toLocaleLowerCase()})`
+      );
+      column.removeAttribute("data-gap");
     }
   });
 }
@@ -325,7 +383,7 @@ function buildTemplateColumns(doc) {
  * @param {Element} doc The document element
  */
 export function applyTemplates(doc) {
-  if (doc.body.classList.contains('columns')) {
+  if (doc.body.classList.contains("columns")) {
     buildTemplateColumns(doc);
   }
 }
@@ -353,7 +411,7 @@ export function applyTemplates(doc) {
  */
 export async function fetchPlaceholders(path) {
   const rootPath = getRootPath();
-  const fallback = getMetadata('placeholders');
+  const fallback = getMetadata("placeholders");
   window.placeholders = window.placeholders || {};
 
   // Track pending requests to prevent duplicate fetches
@@ -368,7 +426,7 @@ export async function fetchPlaceholders(path) {
   }
 
   // Create cache key for this specific combination
-  const cacheKey = [path, fallback].filter(Boolean).join('|');
+  const cacheKey = [path, fallback].filter(Boolean).join("|");
 
   // Prevent empty cache keys
   if (!cacheKey) {
@@ -397,22 +455,27 @@ export async function fetchPlaceholders(path) {
       }
 
       // Create new fetch promise
-      const resourceFetchPromise = fetch(`${url}?sheet=data`).then(async (response) => {
-        if (response.ok) {
-          const data = await response.json();
-          // Cache the response
-          window.placeholders[resourceCacheKey] = data;
-          return data;
-        }
-        console.warn(`Failed to fetch placeholders from ${url}: HTTP ${response.status} ${response.statusText}`);
-        return {};
-      }).catch((error) => {
-        console.error(`Error fetching placeholders from ${url}:`, error);
-        return {};
-      }).finally(() => {
-        // Remove from pending
-        delete window.placeholders._pending[resourceCacheKey];
-      });
+      const resourceFetchPromise = fetch(`${url}?sheet=data`)
+        .then(async (response) => {
+          if (response.ok) {
+            const data = await response.json();
+            // Cache the response
+            window.placeholders[resourceCacheKey] = data;
+            return data;
+          }
+          console.warn(
+            `Failed to fetch placeholders from ${url}: HTTP ${response.status} ${response.statusText}`
+          );
+          return {};
+        })
+        .catch((error) => {
+          console.error(`Error fetching placeholders from ${url}:`, error);
+          return {};
+        })
+        .finally(() => {
+          // Remove from pending
+          delete window.placeholders._pending[resourceCacheKey];
+        });
 
       // Store pending promise
       window.placeholders._pending[resourceCacheKey] = resourceFetchPromise;
@@ -436,7 +499,11 @@ export async function fetchPlaceholders(path) {
         // Early return if no data
         const hasData = jsons.some((json) => json.data?.length > 0);
         if (!hasData) {
-          console.warn(`No placeholder data found for path: ${path}${fallback ? ` and fallback: ${fallback}` : ''}`);
+          console.warn(
+            `No placeholder data found for path: ${path}${
+              fallback ? ` and fallback: ${fallback}` : ""
+            }`
+          );
           resolve({});
           return;
         }
@@ -457,7 +524,11 @@ export async function fetchPlaceholders(path) {
 
         // Early return if no valid data
         if (Object.keys(data).length === 0) {
-          console.warn(`No valid placeholder data found after processing for path: ${path}${fallback ? ` and fallback: ${fallback}` : ''}`);
+          console.warn(
+            `No valid placeholder data found after processing for path: ${path}${
+              fallback ? ` and fallback: ${fallback}` : ""
+            }`
+          );
           resolve({});
           return;
         }
@@ -466,7 +537,7 @@ export async function fetchPlaceholders(path) {
         const placeholders = {};
 
         Object.entries(data).forEach(([Key, Value]) => {
-          const keys = Key.split('.');
+          const keys = Key.split(".");
           const lastKey = keys.pop();
           let target = placeholders;
 
@@ -486,7 +557,12 @@ export async function fetchPlaceholders(path) {
         resolve(placeholders);
       })
       .catch((error) => {
-        console.error(`Error loading placeholders for path: ${path}${fallback ? ` and fallback: ${fallback}` : ''}`, error);
+        console.error(
+          `Error loading placeholders for path: ${path}${
+            fallback ? ` and fallback: ${fallback}` : ""
+          }`,
+          error
+        );
         // error loading placeholders
         resolve({});
       });
@@ -513,25 +589,25 @@ export async function getConfigFromSession() {
   const configURL = `${window.location.origin}/config.json`;
 
   try {
-    const configJSON = window.sessionStorage.getItem('config');
+    const configJSON = window.sessionStorage.getItem("config");
     if (!configJSON) {
-      throw new Error('No config in session storage');
+      throw new Error("No config in session storage");
     }
 
     const parsedConfig = JSON.parse(configJSON);
     if (
-      !parsedConfig[':expiry']
-      || parsedConfig[':expiry'] < Math.round(Date.now() / 1000)
+      !parsedConfig[":expiry"] ||
+      parsedConfig[":expiry"] < Math.round(Date.now() / 1000)
     ) {
-      throw new Error('Config expired');
+      throw new Error("Config expired");
     }
     return parsedConfig;
   } catch (e) {
     const config = await fetch(configURL);
-    if (!config.ok) throw new Error('Failed to fetch config');
+    if (!config.ok) throw new Error("Failed to fetch config");
     const configJSON = await config.json();
-    configJSON[':expiry'] = Math.round(Date.now() / 1000) + 7200;
-    window.sessionStorage.setItem('config', JSON.stringify(configJSON));
+    configJSON[":expiry"] = Math.round(Date.now() / 1000) + 7200;
+    window.sessionStorage.setItem("config", JSON.stringify(configJSON));
     return configJSON;
   }
 }
@@ -547,11 +623,11 @@ function createHashFromObject(obj, length = 5) {
   const objString = Object.entries(obj)
     .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
     .map(([key, value]) => `${key}:${value}`)
-    .join('|');
+    .join("|");
 
   // Create a short hash using a simple string manipulation
   return objString
-    .split('')
+    .split("")
     .reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) % 2147483647, 0)
     .toString(36)
     .slice(0, length);
@@ -562,10 +638,10 @@ function createHashFromObject(obj, length = 5) {
  * @returns {Promise<URL>} A promise that resolves to the endpoint URL with query parameters
  */
 export async function commerceEndpointWithQueryParams() {
-  const urlWithQueryParams = new URL(getConfigValue('commerce-endpoint'));
-  const headers = getHeaders('cs');
+  const urlWithQueryParams = new URL(getConfigValue("commerce-endpoint"));
+  const headers = getHeaders("cs");
   const shortHash = createHashFromObject(headers);
-  urlWithQueryParams.searchParams.append('cb', shortHash);
+  urlWithQueryParams.searchParams.append("cb", shortHash);
   return urlWithQueryParams;
 }
 
@@ -584,7 +660,9 @@ export function getSkuFromUrl() {
  * @returns {string[]|undefined} Array of option UIDs, or undefined if not found
  */
 export function getOptionsUIDsFromUrl() {
-  return new URLSearchParams(window.location.search).get('optionsUIDs')?.split(',');
+  return new URLSearchParams(window.location.search)
+    .get("optionsUIDs")
+    ?.split(",");
 }
 
 /**
@@ -592,32 +670,54 @@ export function getOptionsUIDsFromUrl() {
  * Stores product view history and purchase history in localStorage.
  */
 function trackHistory() {
-  if (!getConsent('commerce-recommendations')) {
+  if (!getConsent("commerce-recommendations")) {
     return;
   }
   // Store product view history in session storage
-  const storeViewCode = getConfigValue('headers.cs.Magento-Store-View-Code');
+  const storeViewCode = getConfigValue("headers.cs.Magento-Store-View-Code");
   window.adobeDataLayer.push((dl) => {
-    dl.addEventListener('adobeDataLayer:change', (event) => {
-      if (!event.productContext) {
-        return;
-      }
-      const key = `${storeViewCode}:productViewHistory`;
-      let viewHistory = JSON.parse(window.localStorage.getItem(key) || '[]');
-      viewHistory = viewHistory.filter((item) => item.sku !== event.productContext.sku);
-      viewHistory.push({ date: new Date().toISOString(), sku: event.productContext.sku });
-      window.localStorage.setItem(key, JSON.stringify(viewHistory.slice(-10)));
-    }, { path: 'productContext' });
-    dl.addEventListener('place-order', () => {
-      const shoppingCartContext = dl.getState('shoppingCartContext');
+    dl.addEventListener(
+      "adobeDataLayer:change",
+      (event) => {
+        if (!event.productContext) {
+          return;
+        }
+        const key = `${storeViewCode}:productViewHistory`;
+        let viewHistory = JSON.parse(window.localStorage.getItem(key) || "[]");
+        viewHistory = viewHistory.filter(
+          (item) => item.sku !== event.productContext.sku
+        );
+        viewHistory.push({
+          date: new Date().toISOString(),
+          sku: event.productContext.sku,
+        });
+        window.localStorage.setItem(
+          key,
+          JSON.stringify(viewHistory.slice(-10))
+        );
+      },
+      { path: "productContext" }
+    );
+    dl.addEventListener("place-order", () => {
+      const shoppingCartContext = dl.getState("shoppingCartContext");
       if (!shoppingCartContext) {
         return;
       }
       const key = `${storeViewCode}:purchaseHistory`;
-      const purchasedProducts = shoppingCartContext.items.map((item) => item.product.sku);
-      const purchaseHistory = JSON.parse(window.localStorage.getItem(key) || '[]');
-      purchaseHistory.push({ date: new Date().toISOString(), items: purchasedProducts });
-      window.localStorage.setItem(key, JSON.stringify(purchaseHistory.slice(-5)));
+      const purchasedProducts = shoppingCartContext.items.map(
+        (item) => item.product.sku
+      );
+      const purchaseHistory = JSON.parse(
+        window.localStorage.getItem(key) || "[]"
+      );
+      purchaseHistory.push({
+        date: new Date().toISOString(),
+        items: purchasedProducts,
+      });
+      window.localStorage.setItem(
+        key,
+        JSON.stringify(purchaseHistory.slice(-5))
+      );
     });
   });
 }
@@ -628,14 +728,16 @@ function trackHistory() {
  * @param {string} name - The name identifier for the script element
  */
 export function setJsonLd(data, name) {
-  const existingScript = document.head.querySelector(`script[data-name="${name}"]`);
+  const existingScript = document.head.querySelector(
+    `script[data-name="${name}"]`
+  );
   if (existingScript) {
     existingScript.innerHTML = JSON.stringify(data);
     return;
   }
 
-  const script = document.createElement('script');
-  script.type = 'application/ld+json';
+  const script = document.createElement("script");
+  script.type = "application/ld+json";
 
   script.innerHTML = JSON.stringify(data);
   script.dataset.name = name;
@@ -654,10 +756,10 @@ export async function loadErrorPage(code = 404) {
     throw new Error(`Error getting ${code} page`);
   });
   const parser = new DOMParser();
-  const doc = parser.parseFromString(htmlText, 'text/html');
+  const doc = parser.parseFromString(htmlText, "text/html");
   document.body.innerHTML = doc.body.innerHTML;
   // get dropin styles
-  document.head.querySelectorAll('style[data-dropin]').forEach((style) => {
+  document.head.querySelectorAll("style[data-dropin]").forEach((style) => {
     doc.head.appendChild(style);
   });
   document.head.innerHTML = doc.head.innerHTML;
@@ -665,21 +767,21 @@ export async function loadErrorPage(code = 404) {
   // https://developers.google.com/search/docs/crawling-indexing/javascript/fix-search-javascript
   // Point 2. prevent soft 404 errors
   if (code === 404) {
-    const metaRobots = document.createElement('meta');
-    metaRobots.name = 'robots';
-    metaRobots.content = 'noindex';
+    const metaRobots = document.createElement("meta");
+    metaRobots.name = "robots";
+    metaRobots.content = "noindex";
     document.head.appendChild(metaRobots);
   }
 
   // When moving script tags via innerHTML, they are not executed. They need to be re-created.
-  const notImportMap = (c) => c.textContent && c.type !== 'importmap';
-  Array.from(document.head.querySelectorAll('script'))
+  const notImportMap = (c) => c.textContent && c.type !== "importmap";
+  Array.from(document.head.querySelectorAll("script"))
     .filter(notImportMap)
     .forEach((c) => c.remove());
-  Array.from(doc.head.querySelectorAll('script'))
+  Array.from(doc.head.querySelectorAll("script"))
     .filter(notImportMap)
     .forEach((oldScript) => {
-      const newScript = document.createElement('script');
+      const newScript = document.createElement("script");
       Array.from(oldScript.attributes).forEach(({ name, value }) => {
         newScript.setAttribute(name, value);
       });
@@ -694,7 +796,7 @@ export async function loadErrorPage(code = 404) {
  * @returns {boolean} - true if the user is authenticated
  */
 export function checkIsAuthenticated() {
-  return !!getCookie('auth_dropin_user_token') ?? false;
+  return !!getCookie("auth_dropin_user_token") ?? false;
 }
 
 /**
@@ -703,7 +805,7 @@ export function checkIsAuthenticated() {
  * @returns {boolean} True if consent was given
  */
 export function getConsent(_topic) {
-  console.warn('getConsent not implemented');
+  console.warn("getConsent not implemented");
   return true;
 }
 
@@ -712,12 +814,14 @@ export function getConsent(_topic) {
  * @param {Element} element - The element to attach modal functionality to
  */
 function autolinkModals(element) {
-  element.addEventListener('click', async (e) => {
-    const origin = e.target.closest('a');
+  element.addEventListener("click", async (e) => {
+    const origin = e.target.closest("a");
 
-    if (origin && origin.href && origin.href.includes('/modals/')) {
+    if (origin && origin.href && origin.href.includes("/modals/")) {
       e.preventDefault();
-      const { openModal } = await import(`${window.hlx.codeBasePath}/blocks/modal/modal.js`);
+      const { openModal } = await import(
+        `${window.hlx.codeBasePath}/blocks/modal/modal.js`
+      );
       openModal(origin.href);
     }
   });
