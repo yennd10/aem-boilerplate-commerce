@@ -7,8 +7,8 @@ export default function init(el) {
   // Add parallax class to enable effects
   el.classList.add('parallax-enabled');
   
-  // Get all images in the block
-  const images = el.querySelectorAll('.default-content-wrapper img');
+  // Get all images in the block - updated selector for actual HTML structure
+  const images = el.querySelectorAll('img');
   
   // Parallax configuration
   const parallaxConfig = {

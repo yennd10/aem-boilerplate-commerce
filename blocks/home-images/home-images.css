@@ -1,16 +1,21 @@
-.home-images {
+/* Home Images Block with Parallax Effect */
+.home-images-container {
   position: relative;
   overflow: hidden;
   padding: var(--spacing-large) 0;
 }
 
-.home-images .default-content-wrapper {
+.home-images-wrapper {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-medium);
 }
 
-.home-images .default-content-wrapper p {
+.home-images {
+  position: relative;
+}
+
+.home-images > div > div > p {
   margin: var(--spacing-big) 0;
   position: relative;
   overflow: hidden;
@@ -18,14 +23,14 @@
   box-shadow: var(--shape-shadow-2);
 }
 
-.home-images .default-content-wrapper picture {
+.home-images picture {
   display: block;
   position: relative;
   overflow: hidden;
   border-radius: inherit;
 }
 
-.home-images .default-content-wrapper img {
+.home-images img {
   width: 100%;
   height: auto;
   display: block;
@@ -34,48 +39,48 @@
 }
 
 /* Parallax effect */
-.home-images .default-content-wrapper p:nth-child(1) img {
+.home-images > div > div > p:nth-child(1) img {
   transform: translateY(0);
 }
 
-.home-images .default-content-wrapper p:nth-child(2) img {
+.home-images > div > div > p:nth-child(2) img {
   transform: translateY(0);
 }
 
-.home-images .default-content-wrapper p:nth-child(3) img {
+.home-images > div > div > p:nth-child(3) img {
   transform: translateY(0);
 }
 
 /* Hover effects */
-.home-images .default-content-wrapper p:hover img {
+.home-images > div > div > p:hover img {
   transform: scale(1.05);
 }
 
 /* Responsive adjustments */
 @media (min-width: 900px) {
-  .home-images .default-content-wrapper {
+  .home-images-wrapper {
     padding: 0 var(--spacing-big);
   }
   
-  .home-images .default-content-wrapper p {
+  .home-images > div > div > p {
     margin: var(--spacing-xbig) 0;
   }
 }
 
 /* Parallax animation classes */
-.home-images.parallax-enabled .default-content-wrapper p:nth-child(1) img {
+.home-images.parallax-enabled > div > div > p:nth-child(1) img {
   transform: translateY(var(--parallax-offset-1, 0));
 }
 
-.home-images.parallax-enabled .default-content-wrapper p:nth-child(2) img {
+.home-images.parallax-enabled > div > div > p:nth-child(2) img {
   transform: translateY(var(--parallax-offset-2, 0));
 }
 
-.home-images.parallax-enabled .default-content-wrapper p:nth-child(3) img {
+.home-images.parallax-enabled > div > div > p:nth-child(3) img {
   transform: translateY(var(--parallax-offset-3, 0));
 }
 
 /* Smooth transitions for parallax */
-.home-images.parallax-enabled .default-content-wrapper img {
+.home-images.parallax-enabled img {
   transition: transform 0.1s ease-out;
 }

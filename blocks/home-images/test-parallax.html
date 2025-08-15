@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Parallax Effect</title>
+    <style>
+        /* Test CSS để kiểm tra hiệu ứng */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+        }
+        
+        .test-content {
+            height: 200vh; /* Tạo scroll */
+            padding: 20px;
+        }
+        
+        .test-section {
+            margin: 50px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        /* Copy CSS từ home-images.css */
+        .home-images-container {
+            position: relative;
+            overflow: hidden;
+            padding: 64px 0;
+        }
+        
+        .home-images-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .home-images {
+            position: relative;
+        }
+        
+        .home-images > div > div > p {
+            margin: 32px 0;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 2px 16px 0 rgb(0 0 0 / 16%);
+        }
+        
+        .home-images picture {
+            display: block;
+            position: relative;
+            overflow: hidden;
+            border-radius: inherit;
+        }
+        
+        .home-images img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease-out;
+            will-change: transform;
+        }
+        
+        /* Parallax animation classes */
+        .home-images.parallax-enabled > div > div > p:nth-child(1) img {
+            transform: translateY(var(--parallax-offset-1, 0));
+        }
+        
+        .home-images.parallax-enabled > div > div > p:nth-child(2) img {
+            transform: translateY(var(--parallax-offset-2, 0));
+        }
+        
+        .home-images.parallax-enabled > div > div > p:nth-child(3) img {
+            transform: translateY(var(--parallax-offset-3, 0));
+        }
+        
+        /* Smooth transitions for parallax */
+        .home-images.parallax-enabled img {
+            transition: transform 0.1s ease-out;
+        }
+        
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-info">
+        <div>Scroll để test parallax</div>
+        <div id="scroll-info">Scroll Y: 0</div>
+        <div id="image-positions"></div>
+    </div>
+    
+    <div class="test-content">
+        <div class="test-section">
+            <h2>Test Section 1</h2>
+            <p>Scroll xuống để xem hiệu ứng parallax</p>
+        </div>
+        
+        <!-- Copy HTML structure từ AEM -->
+        <div class="section home-images-container" data-section-status="loaded">
+            <div class="home-images-wrapper">
+                <div class="home-images block parallax-enabled" data-block-name="home-images" data-block-status="loaded">
+                    <div>
+                        <div>
+                            <p>
+                                <picture>
+                                    <img loading="lazy" alt="Test Image 1" src="https://via.placeholder.com/750x417/ff6b6b/ffffff?text=Image+1" width="750" height="417">
+                                </picture>
+                            </p>
+                            <p>
+                                <picture>
+                                    <img loading="lazy" alt="Test Image 2" src="https://via.placeholder.com/750x516/4ecdc4/ffffff?text=Image+2" width="750" height="516">
+                                </picture>
+                            </p>
+                            <p>
+                                <picture>
+                                    <img loading="lazy" alt="Test Image 3" src="https://via.placeholder.com/750x417/45b7d1/ffffff?text=Image+3" width="750" height="417">
+                                </picture>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Test Section 2</h2>
+            <p>Scroll lên để xem hiệu ứng parallax</p>
+        </div>
+    </div>
+
+    <script>
+        // Copy JavaScript từ home-images.js
+        function initParallax(el) {
+            // Add parallax class to enable effects
+            el.classList.add('parallax-enabled');
+            
+            // Get all images in the block
+            const images = el.querySelectorAll('img');
+            
+            // Parallax configuration
+            const parallaxConfig = {
+                speed: 0.5,
+                threshold: 0.1,
+                smoothness: 0.1
+            };
+            
+            // Store initial positions
+            const imagePositions = [];
+            images.forEach((img, index) => {
+                const rect = img.getBoundingClientRect();
+                imagePositions.push({
+                    element: img,
+                    index: index,
+                    initialTop: rect.top + window.scrollY,
+                    height: rect.height
+                });
+            });
+            
+            // Update debug info
+            function updateDebugInfo() {
+                document.getElementById('scroll-info').textContent = `Scroll Y: ${window.scrollY}`;
+                let positionsText = '';
+                imagePositions.forEach((pos, i) => {
+                    const offset = pos.element.style.getPropertyValue(`--parallax-offset-${i + 1}`) || '0px';
+                    positionsText += `Img ${i + 1}: ${offset}<br>`;
+                });
+                document.getElementById('image-positions').innerHTML = positionsText;
+            }
+            
+            // Parallax scroll handler
+            function handleParallax() {
+                const scrollY = window.scrollY;
+                const windowHeight = window.innerHeight;
+                
+                imagePositions.forEach((imgData, index) => {
+                    const { element, initialTop, height } = imgData;
+                    const rect = element.getBoundingClientRect();
+                    
+                    // Calculate visibility
+                    const elementTop = rect.top;
+                    const elementBottom = rect.bottom;
+                    const isVisible = elementBottom > 0 && elementTop < windowHeight;
+                    
+                    if (isVisible) {
+                        // Calculate parallax offset based on scroll position
+                        const scrollProgress = (scrollY - (initialTop - windowHeight)) / (windowHeight + height);
+                        const parallaxOffset = scrollProgress * parallaxConfig.speed * 100;
+                        
+                        // Apply different parallax directions for visual interest
+                        let finalOffset;
+                        switch (index) {
+                            case 0: // First image - move up
+                                finalOffset = -parallaxOffset;
+                                break;
+                            case 1: // Second image - move down
+                                finalOffset = parallaxOffset * 0.7;
+                                break;
+                            case 2: // Third image - move up slightly
+                                finalOffset = -parallaxOffset * 0.5;
+                                break;
+                            default:
+                                finalOffset = 0;
+                        }
+                        
+                        // Apply the transform using CSS custom properties
+                        element.style.setProperty(`--parallax-offset-${index + 1}`, `${finalOffset}px`);
+                    }
+                });
+                
+                updateDebugInfo();
+            }
+            
+            // Throttled scroll handler for performance
+            let ticking = false;
+            function requestTick() {
+                if (!ticking) {
+                    requestAnimationFrame(() => {
+                        handleParallax();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }
+            
+            // Add scroll event listener
+            window.addEventListener('scroll', requestTick, { passive: true });
+            
+            // Initial call to set positions
+            handleParallax();
+            
+            // Handle window resize
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    // Recalculate positions after resize
+                    imagePositions.forEach((imgData, index) => {
+                        const rect = imgData.element.getBoundingClientRect();
+                        imgData.initialTop = rect.top + window.scrollY;
+                        imgData.height = rect.height;
+                    });
+                    handleParallax();
+                }, 250);
+            });
+        }
+        
+        // Initialize parallax when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const homeImagesBlock = document.querySelector('.home-images');
+            if (homeImagesBlock) {
+                initParallax(homeImagesBlock);
+                console.log('Parallax initialized on:', homeImagesBlock);
+            } else {
+                console.error('Home images block not found');
+            }
+        });
+    </script>
+</body>
+</html>
