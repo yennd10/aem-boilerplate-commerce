@@ -1,86 +1,42 @@
-/* Home Images Block with Parallax Effect */
 .home-images-container {
   position: relative;
   overflow: hidden;
-  padding: var(--spacing-large) 0;
-}
-
-.home-images-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-medium);
-}
-
-.home-images {
-  position: relative;
-}
-
-.home-images > div > div > p {
-  margin: var(--spacing-big) 0;
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--shape-border-radius-2);
-  box-shadow: var(--shape-shadow-2);
-}
-
-.home-images picture {
-  display: block;
-  position: relative;
-  overflow: hidden;
-  border-radius: inherit;
-}
-
-.home-images img {
   width: 100%;
-  height: auto;
-  display: block;
-  transition: transform 0.3s ease-out;
-  will-change: transform;
 }
 
-/* Parallax effect */
-.home-images > div > div > p:nth-child(1) img {
-  transform: translateY(0);
+.home-images-container .default-content-wrapper{
+  position: relative;
+  height: 600px;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
-.home-images > div > div > p:nth-child(2) img {
-  transform: translateY(0);
+.home-images-container .default-content-wrapper {
+  position: relative;
+  height: 600px;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
-.home-images > div > div > p:nth-child(3) img {
-  transform: translateY(0);
+.home-images-container .default-content-wrapper::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 
-/* Hover effects */
-.home-images > div > div > p:hover img {
-  transform: scale(1.05);
+.home-images-container .default-content-wrapper > p {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity; /* hỗ trợ cả transform và opacity */
+  transition: opacity 0.3s ease-out;
+  height: 1000px; /* Tăng chiều cao để có đủ không gian scroll cho 3 giai đoạn */
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-/* Responsive adjustments */
-@media (min-width: 900px) {
-  .home-images-wrapper {
-    padding: 0 var(--spacing-big);
-  }
-  
-  .home-images > div > div > p {
-    margin: var(--spacing-xbig) 0;
-  }
-}
-
-/* Parallax animation classes */
-.home-images.parallax-enabled > div > div > p:nth-child(1) img {
-  transform: translateY(var(--parallax-offset-1, 0));
-}
-
-.home-images.parallax-enabled > div > div > p:nth-child(2) img {
-  transform: translateY(var(--parallax-offset-2, 0));
-}
-
-.home-images.parallax-enabled > div > div > p:nth-child(3) img {
-  transform: translateY(var(--parallax-offset-3, 0));
-}
-
-/* Smooth transitions for parallax */
-.home-images.parallax-enabled img {
-  transition: transform 0.1s ease-out;
+.home-images-container .default-content-wrapper > p img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }

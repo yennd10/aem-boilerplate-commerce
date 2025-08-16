@@ -1,114 +1,104 @@
-/**
- * Home Images Block with Parallax Effect
- * Creates a smooth parallax scrolling effect for images
- */
-
 export default function init(el) {
-  // Add parallax class to enable effects
-  el.classList.add('parallax-enabled');
+  // Get scrollable container and paragraphs (layers) 
+  // .default-content-wrapper is outside the block, need to find from parent
+  const parentContainer = el.closest('.home-images-container');
+  const scrollContainer = parentContainer ? parentContainer.querySelector('.default-content-wrapper') : null;
+  const paragraphs = parentContainer ? parentContainer.querySelectorAll('.default-content-wrapper > p') : [];
   
-  // Get all images in the block - updated selector for actual HTML structure
-  const images = el.querySelectorAll('img');
-  
-  // Parallax configuration
-  const parallaxConfig = {
-    speed: 0.5, // Adjust this value to control parallax intensity (0.1 to 1.0)
-    threshold: 0.1, // Minimum visibility threshold
-    smoothness: 0.1 // Smoothing factor for transitions
-  };
-  
-  // Store initial positions
-  const imagePositions = [];
-  images.forEach((img, index) => {
-    const rect = img.getBoundingClientRect();
-    imagePositions.push({
-      element: img,
-      index: index,
-      initialTop: rect.top + window.scrollY,
-      height: rect.height
-    });
+  if (!scrollContainer || paragraphs.length === 0) {
+    return;
+  }
+
+  // Set initial state for each layer
+  paragraphs.forEach((p, index) => {
+    if (index === 0) {
+      // Layer 1: fully visible
+      p.style.opacity = '1';
+    } else {
+      // Layer 2, 3: completely hidden
+      p.style.opacity = '0';
+    }
   });
-  
-  // Parallax scroll handler
-  function handleParallax() {
-    const scrollY = window.scrollY;
-    const windowHeight = window.innerHeight;
-    
-    imagePositions.forEach((imgData, index) => {
-      const { element, initialTop, height } = imgData;
-      const rect = element.getBoundingClientRect();
+
+  let ticking = false;
+
+  // Handle scroll with parallax transform and 3-stage fade
+  function update() {
+    const scrollTop = scrollContainer.scrollTop;
+    const scrollHeight = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+    const progress = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
+
+    // Handle parallax transform and 3-stage fade in/out
+    paragraphs.forEach((p, index) => {
+      // PARALLAX TRANSFORM - only use translateY
+      if (index === 0) {
+        // Layer 1 (background) - slowest movement
+        const translateY = progress * -25; // Move up
+        p.style.transform = `translateY(${translateY}px)`;
+      } else if (index === 1) {
+        // Layer 2 (middle) - medium movement
+        const translateY = progress * 15; // Move down
+        p.style.transform = `translateY(${translateY}px)`;
+      } else {
+        // Layer 3 (foreground) - fastest movement
+        const translateY = progress * 30; // Move down
+        p.style.transform = `translateY(${translateY}px)`;
+      }
       
-      // Calculate visibility
-      const elementTop = rect.top;
-      const elementBottom = rect.bottom;
-      const isVisible = elementBottom > 0 && elementTop < windowHeight;
-      
-      if (isVisible) {
-        // Calculate parallax offset based on scroll position
-        const scrollProgress = (scrollY - (initialTop - windowHeight)) / (windowHeight + height);
-        const parallaxOffset = scrollProgress * parallaxConfig.speed * 100;
-        
-        // Apply different parallax directions for visual interest
-        let finalOffset;
-        switch (index) {
-          case 0: // First image - move up
-            finalOffset = -parallaxOffset;
-            break;
-          case 1: // Second image - move down
-            finalOffset = parallaxOffset * 0.7;
-            break;
-          case 2: // Third image - move up slightly
-            finalOffset = -parallaxOffset * 0.5;
-            break;
-          default:
-            finalOffset = 0;
+      // 3 STAGES FADE IN/OUT:
+      if (index === 0) {
+        // Layer 1: Stage 1 - fade out from 1 → 0 (progress 0 → 0.33)
+        if (progress <= 0.33) {
+          const opacity = 1 - (progress * 3); // 1 → 0
+          p.style.opacity = Math.max(0, opacity);
+        } else {
+          p.style.opacity = 0; // completely hidden
         }
-        
-        // Apply the transform using CSS custom properties
-        element.style.setProperty(`--parallax-offset-${index + 1}`, `${finalOffset}px`);
+      } else if (index === 1) {
+        // Layer 2: Stage 1 & 2 & 3
+        if (progress <= 0.33) {
+          // Stage 1: fade in from 0 → 1 (progress 0 → 0.33)
+          const opacity = progress * 3; // 0 → 1
+          p.style.opacity = Math.min(1, opacity);
+        } else if (progress <= 0.66) {
+          // Stage 2: keep opacity = 1 (progress 0.33 → 0.66)
+          p.style.opacity = 1;
+        } else {
+          // Stage 3: fade out from 1 → 0 (progress 0.66 → 1)
+          const opacity = 1 - ((progress - 0.66) * 3); // 1 → 0
+          p.style.opacity = Math.max(0, opacity);
+        }
+      } else if (index === 2) {
+        // Layer 3: Stage 3 - fade in from 0 → 1 (progress 0.66 → 1)
+        if (progress <= 0.66) {
+          p.style.opacity = 0; // completely hidden
+        } else {
+          const opacity = (progress - 0.66) * 3; // 0 → 1
+          p.style.opacity = Math.min(1, opacity);
+        }
       }
     });
+    
+    ticking = false;
   }
-  
-  // Throttled scroll handler for performance
-  let ticking = false;
-  function requestTick() {
+
+  function onScroll() {
     if (!ticking) {
-      requestAnimationFrame(() => {
-        handleParallax();
-        ticking = false;
-      });
+      window.requestAnimationFrame(update);
       ticking = true;
     }
   }
+
+  // Add scroll event listener to scrollable container
+  scrollContainer.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
   
-  // Add scroll event listener
-  window.addEventListener('scroll', requestTick, { passive: true });
-  
-  // Initial call to set positions
-  handleParallax();
-  
-  // Handle window resize
-  let resizeTimeout;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-      // Recalculate positions after resize
-      imagePositions.forEach((imgData, index) => {
-        const rect = imgData.element.getBoundingClientRect();
-        imgData.initialTop = rect.top + window.scrollY;
-        imgData.height = rect.height;
-      });
-      handleParallax();
-    }, 250);
-  });
-  
+  // Call initial update to set initial state
+  update();
+
   // Cleanup function
-  function cleanup() {
-    window.removeEventListener('scroll', requestTick);
-    window.removeEventListener('resize', cleanup);
-  }
-  
-  // Return cleanup function for block lifecycle management
-  return cleanup;
+  return function cleanup() {
+    scrollContainer.removeEventListener('scroll', onScroll);
+    window.removeEventListener('resize', onScroll);
+  };
 }

@@ -71,17 +71,17 @@ function update() {
 
 ### 3. 3 Giai đoạn fade in/out
 
-#### Giai đoạn 1: progress = 0 → 0.33
+#### Giai đoạn 1: progress = 0 → 0.33 (0-200px)
 - **Layer 1**: opacity = 1 → 0 (ẩn dần)
 - **Layer 2**: opacity = 0 → 1 (hiện dần)  
 - **Layer 3**: opacity = 0 (ẩn hoàn toàn)
 
-#### Giai đoạn 2: progress = 0.33 → 0.66 
+#### Giai đoạn 2: progress = 0.33 → 0.66 (200-400px)
 - **Layer 1**: opacity = 0 (ẩn hoàn toàn)
 - **Layer 2**: opacity = 1 (hiện hoàn toàn)
 - **Layer 3**: opacity = 0 (ẩn hoàn toàn)
 
-#### Giai đoạn 3: progress = 0.66 → 1
+#### Giai đoạn 3: progress = 0.66 → 1 (400-600px)
 - **Layer 1**: opacity = 0 (ẩn hoàn toàn)
 - **Layer 2**: opacity = 1 → 0 (ẩn dần)
 - **Layer 3**: opacity = 0 → 1 (hiện dần)
